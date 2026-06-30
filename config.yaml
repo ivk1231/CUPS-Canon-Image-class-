@@ -1,0 +1,15 @@
+name: "Canon CUPS Driver"
+version: "1.0.0"
+slug: "canon_cups"
+description: "CUPS with pre-installed Canon MF3010 driver"
+arch:
+  - aarch64
+startup: services
+boot: auto
+host_network: true
+usb: true
+init: false
+homeassistant_api: true
+ports:
+  631/tcp: 631
+  631/udp: 631

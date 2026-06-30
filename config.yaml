@@ -13,3 +13,7 @@ homeassistant_api: true
 ports:
   631/tcp: 631
   631/udp: 631
+privileged:
+  - SYS_ADMIN
+  - SYS_RAWIO
+

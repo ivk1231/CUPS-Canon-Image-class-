@@ -57,12 +57,16 @@ log "Starting CUPS scheduler..."
 cupsd -f &
 CUPSD_PID=$!
 
-# Wait for CUPS to become responsive
-for i in $(seq 1 15); do
-    lpstat -r >/dev/null 2>&1 && break
+# Wait for CUPS to become responsive and the socket to be created
+log "Waiting for CUPS socket and scheduler..."
+for i in $(seq 1 30); do
+    if lpstat -r >/dev/null 2>&1 && [ -S /var/run/cups/cups.sock ]; then
+        log "CUPS scheduler is responsive and socket is ready."
+        break
+    fi
     sleep 1
 done
-sleep 2
+sleep 3
 
 # ── 7. First-boot printer registration and PPD patching ──────────────────
 PRINTERS_CONF="/config/cups/printers.conf"
@@ -84,7 +88,20 @@ else
     USB_URI="usb://Canon/MF3010?serial=0165U0000303&interface=1"
     
     log "Registering with URI: $USB_URI and PPD: $PPD"
-    lpadmin -p Canon-MF3010 -E -v "$USB_URI" -m "$PPD"
+    
+    # Robust retry loop for lpadmin to handle any startup latency
+    for attempt in $(seq 1 5); do
+        if lpadmin -p Canon-MF3010 -E -v "$USB_URI" -m "$PPD"; then
+            log "Printer 'Canon-MF3010' registered successfully on attempt $attempt."
+            break
+        else
+            warn "lpadmin registration failed (attempt $attempt/5). Retrying in 2 seconds..."
+            sleep 2
+        fi
+        if [ $attempt -eq 5 ]; then
+            fail "Failed to register printer 'Canon-MF3010' after 5 attempts."
+        fi
+    done
     
     log "Setting default options (no scaling, A4)..."
     lpadmin -p Canon-MF3010 \

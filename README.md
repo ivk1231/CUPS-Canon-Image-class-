@@ -1,6 +1,6 @@
 # Home Assistant Local Add-on: Canon CUPS Driver
 
-A robust, permanent Home Assistant local add-on that provides CUPS with Canon UFR II driver support (specifically tested with the Canon MF3010).
+A  permanent Home Assistant local add-on that provides CUPS with Canon UFR II driver support (specifically tested with the Canon MF3010).
 
 This add-on bypasses Home Assistant Supervisor's `s6-overlay` limitations (which typically crash when forced to run as PID 2 via the `--init=true` flag) by using a lightweight `bash` entrypoint. This guarantees the add-on starts reliably across all host reboots.
 
@@ -50,7 +50,6 @@ This driver supports a vast array of Canon models (Linux 32-bit, 64-bit, and ARM
 
 4. **Install the Add-on:**
    - Go to Home Assistant > Settings > Add-ons > Add-on Store.
-   - Click the three dots in the top right and click "Check for updates" to reload local add-ons.
    - Locate **Canon CUPS Driver** under "Local add-ons" and click **Install**.
    - Check the **Start on boot** and **Show in sidebar** toggles, then click **Start**.
 
